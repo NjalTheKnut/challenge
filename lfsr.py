@@ -1,14 +1,22 @@
-def Crypt(data, iv):
+def LFSR(data, iv):
+    fback = 0x12345678
+    temp = iv & 0xFF
     for i in data:
-        fback = 0x87654321
-        lsb = 1 & iv
+        lsb = 1 & temp
         if (lsb == 1):
             iv = ((iv >> 1) ^ fback)
         if lsb:
             iv >>= 1
-        yield i ^ iv
+        yield i ^ temp
 
 
-print(bytes(Crypt(b'apple', 0x78)))
-temp = bytes(Crypt(b'apple', 0x78))
-print(bytes(Crypt(temp, 0x78)))
+def Crypt(data, iv):
+    return bytes(LFSR(data, iv))
+
+
+print(Crypt(b'apple', 0x12345678))
+temp = Crypt(b'apple', 0x12345678)
+print(Crypt(temp, 0x12345678))
+print(Crypt(b'cheese', 0x12345678))
+temp = Crypt(b'cheese', 0x12345678)
+print(Crypt(temp, 0x12345678))
